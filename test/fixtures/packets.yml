@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dst_id: 1
+  src_id: 1
+  iface_name: MyString
+  content: MyString
+
+two:
+  dst_id: 1
+  src_id: 1
+  iface_name: MyString
+  content: MyString
