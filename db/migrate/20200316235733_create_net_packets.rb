@@ -1,6 +1,6 @@
-class CreatePackets < ActiveRecord::Migration[6.0]
+class CreateNetPackets < ActiveRecord::Migration[6.0]
   def change
-    create_table :packets do |t|
+    create_table :net_packets do |t|
       t.integer :dst_id
       t.integer :src_id
       t.string :iface_name

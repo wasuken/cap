@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PacketTest < ActiveSupport::TestCase
+class NetPacketsControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
   #   assert true
   # end

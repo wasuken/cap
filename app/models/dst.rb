@@ -1,3 +1,3 @@
 class Dst < ApplicationRecord
-  belongs_to :packet
+  has_many :packet
 end

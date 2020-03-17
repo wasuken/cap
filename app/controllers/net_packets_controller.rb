@@ -1,0 +1,2 @@
+class NetPacketsController < ApplicationController
+end
