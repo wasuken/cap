@@ -6,8 +6,4 @@ class NetPacketsControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", "index"
     assert_response :success
   end
-  test "get api root" do
-    get "/api/v1/net_packets"
-    assert_response :success
-  end
 end
