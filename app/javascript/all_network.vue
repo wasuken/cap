@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div id="app">
 		<h2>interfaces</h2>
 		<ul>
 			<li v-for="i in interfaces" :key="i">
@@ -12,16 +12,32 @@
 				{{ip}} => {{ (packets.filter(x => x.dip == ip).length / packets.length) * 100 }}%
 			</li>
 		</ul>
+		<d3-network :net-nodes="nodes" :net-links="links" :options="options"></d3-network>
 	</div>
 </template>
 <script>
+ import D3Network from 'vue-d3-network';
  export default{
 	 name: "network",
+	 components:{
+		 'd3-network': D3Network
+	 },
 	 data: function(){
 		 return{
 			 interfaces: [],
-			 ip: [],
-			 packets: []
+			 ips: [],
+			 packets: [],
+			 nodes: [],
+			 links: [],
+			 options:
+		 {
+			 force: 3000,
+			 size:{ w:1000, h:600},
+			 nodeSize: 10,
+			 nodeLabels: true,
+			 linkLabels: true,
+			 linkWidth:5
+		 },
 		 }
 	 },
 	 methods: {
@@ -34,6 +50,24 @@
 					 this.interfaces.sort();
 					 this.ips = this.uniq(json.map(x => x.sip));
 					 this.ips.sort();
+					 let ifaces = this.uniq(this.packets.map(x => x.iface_name));
+					 this.nodes = [];
+					 this.link = [];
+					 let iface_map = {}
+					 ifaces.forEach((x, i) => {
+						 console.log(i);
+						 this.nodes.push({id: i, name: x})
+						 iface_map[x] = i;
+					 });
+					 let iface_ips = this.ips.map(x => {
+						 return {iface: this.packets.find(y => y.dip == x).iface_name, dip: x};
+					 });
+					 iface_ips.forEach((x, i) => {
+						 this.nodes.push({id: i+ifaces.length, name: x.dip})
+						 this.links.push({sid: iface_map[x.iface],
+										  tid: i+ifaces.length,
+										  name: "" + ((this.packets.filter(y => y.dip == x.dip).length / this.packets.length) * 100) + "%"});
+					 });
 				 });
 		 },
 		 uniq: function(array) {
@@ -54,3 +88,4 @@
 	 }
  }
 </script>
+<style src="vue-d3-network/dist/vue-d3-network.css"></style>
