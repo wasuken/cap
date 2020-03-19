@@ -19,10 +19,16 @@ class PacketCaptureJob < ApplicationJob
   end
   def get_capture(iface)
     cap = Capture.new(:iface=>iface, :start=>true)
+    cnt = 0
     cap.stream.each do |pkt|
       ActiveRecord::Base.transaction do
         begin
-          # 今はTCPのみ
+          # After running 100 times, Secession.
+          if cnt > 100
+            PacketCaptureJob.perform_later
+            return
+          end
+          # now only tcp
           if TCPPacket.can_parse?(pkt)
             tcp_packet = TCPPacket.parse(pkt)
             src_mac = EthHeader.str2mac(tcp_packet.eth_src).to_s
@@ -37,13 +43,13 @@ class PacketCaptureJob < ApplicationJob
             dst = Dst.find_or_create_by(dip: dst_ip, dport: dst_port, dmac: dst_mac)
             p dst
             NetPacket.create!(src_id: src.id, dst_id: dst.id, iface_name: iface, content: pkt.force_encoding("UTF-8"))
+            cnt += 1
           end
         rescue => er
           p er
           raise ActiveRecord::Rollback
         end
       end
-
     end
   end
 end
