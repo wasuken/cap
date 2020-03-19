@@ -42,7 +42,8 @@
 	 },
 	 methods: {
 		 asyncPackets: function(){
-			 fetch("/api/v1/net_packets")
+			 let token = document.getElementById("token").value;
+			 fetch("/api/v1/net_packets?token=" + token)
 				 .then(resp => resp.json())
 				 .then(json => {
 					 this.packets = json;
@@ -55,7 +56,6 @@
 					 this.link = [];
 					 let iface_map = {}
 					 ifaces.forEach((x, i) => {
-						 console.log(i);
 						 this.nodes.push({id: i, name: x})
 						 iface_map[x] = i;
 					 });
