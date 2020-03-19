@@ -47,7 +47,7 @@
 				 .then(resp => resp.json())
 				 .then(json => {
 					 this.packets = json;
-					 this.interfaces = this.uniq(json.map(x => x.iface_name))
+					 this.interfaces = this.uniq(json.map(x => x.iface_name));
 					 this.interfaces.sort();
 					 this.ips = this.uniq(json.map(x => x.sip));
 					 this.ips.sort();

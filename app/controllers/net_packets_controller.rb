@@ -6,7 +6,7 @@ class NetPacketsController < ApplicationController
     @user = current_user
     @user.token = SecureRandom.base64(35)
     @user.save
-    @token = @user.token
+    @token = current_user.token
     render "index"
   end
 end
