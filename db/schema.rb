@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_215406) do
   create_table "net_packets", force: :cascade do |t|
     t.integer "dst_id"
     t.integer "src_id"
+    t.string "packet_type", default: "tcp"
     t.string "iface_name"
     t.string "content"
     t.datetime "created_at", precision: 6, null: false
@@ -40,7 +41,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_215406) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
-    t.string "token", default: "EAwICvFWewRro/mCDlK03xG20o60H23sx2gHKWGa6nPXJhw=", null: false
+    t.string "token", default: "77716993c7f2ce46d2126169cad0ce5b84c46779583df1d11a77aa0a191aae207f66d7", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

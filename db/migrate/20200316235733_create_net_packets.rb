@@ -3,6 +3,7 @@ class CreateNetPackets < ActiveRecord::Migration[6.0]
     create_table :net_packets do |t|
       t.integer :dst_id
       t.integer :src_id
+      t.string :packet_type, default: "tcp"
       t.string :iface_name
       t.string :content
 

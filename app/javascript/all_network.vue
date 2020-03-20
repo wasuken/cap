@@ -6,7 +6,7 @@
 				{{i}}
 			</li>
 		</ul>
-		<h2>connection nodes</h2>
+		<h2>connection nodes(ip address/packet persenage)</h2>
 		<ul>
 			<li v-for="ip in ips" :key="ip">
 				{{ip}} => {{ (packets.filter(x => x.dip == ip).length / packets.length) * 100 }}%
@@ -49,7 +49,7 @@
 					 this.packets = json;
 					 this.interfaces = this.uniq(json.map(x => x.iface_name));
 					 this.interfaces.sort();
-					 this.ips = this.uniq(json.map(x => x.sip));
+					 this.ips = this.uniq(json.map(x => x.dip));
 					 this.ips.sort();
 					 let ifaces = this.uniq(this.packets.map(x => x.iface_name));
 					 this.nodes = [];
