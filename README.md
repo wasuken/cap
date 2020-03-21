@@ -1,24 +1,9 @@
-# README
+# cap
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+**cap**ture
 
-Things you may want to cover:
+this application function have capture data and data viewing.
 
-* Ruby version
+## LICENCE
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+MIT
