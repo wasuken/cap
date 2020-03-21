@@ -6,22 +6,23 @@
 				{{i}}
 			</li>
 		</ul>
-		<h2>connection nodes(ip address/packet persenage)</h2>
+		<h2>connection nodes(ip address => packet persenage)</h2>
 		<ul>
 			<li v-for="ip in ips" :key="ip">
 				{{ip}} => {{ (packets.filter(x => x.dip == ip).length / packets.length) * 100 }}%
 			</li>
 		</ul>
-		<d3-network :net-nodes="nodes" :net-links="links" :options="options"></d3-network>
 	</div>
 </template>
 <script>
  import D3Network from 'vue-d3-network';
- export default{
+ import util from "./util.js"
+ export default {
 	 name: "network",
 	 components:{
 		 'd3-network': D3Network
 	 },
+	 mixins: [util],
 	 data: function(){
 		 return{
 			 interfaces: [],
@@ -29,19 +30,10 @@
 			 packets: [],
 			 nodes: [],
 			 links: [],
-			 options:
-		 {
-			 force: 3000,
-			 size:{ w:1000, h:600},
-			 nodeSize: 10,
-			 nodeLabels: true,
-			 linkLabels: true,
-			 linkWidth:5
-		 },
 		 }
 	 },
 	 methods: {
-		 asyncPackets: function(){
+		 asyncAllPackets: function(){
 			 let token = document.getElementById("token").value;
 			 fetch("/api/v1/net_packets?token=" + token)
 				 .then(resp => resp.json())
@@ -70,21 +62,10 @@
 					 });
 				 });
 		 },
-		 uniq: function(array) {
-			 const knownElements = {};
-			 const uniquedArray = [];
-			 for (let i = 0, maxi = array.length; i < maxi; i++) {
-				 if (array[i] in knownElements)
-					 continue;
-				 uniquedArray.push(array[i]);
-				 knownElements[array[i]] = true;
-			 }
-			 return uniquedArray;
-		 }
 	 },
 	 mounted: function(){
-		 this.asyncPackets();
-		 window.setInterval(this.asyncPackets, 20000);
+		 this.asyncAllPackets();
+		 window.setInterval(this.asyncAllPackets, 20000);
 	 }
  }
 </script>

@@ -19,6 +19,9 @@ class Api::V1::NetPacketsController < ApplicationController
       if params[:type]
         @packets = @packets.where(packet_type: params[:type])
       end
+      if params[:iface]
+        @packets = @packets.where(iface_name: params[:iface])
+      end
       render json: @packets.order(npid: "desc").take(1000)
     end
   end

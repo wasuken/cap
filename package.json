@@ -9,6 +9,7 @@
     "turbolinks": "^5.2.0",
     "vue": "^2.6.11",
     "vue-d3-network": "^0.1.28",
+    "vue-google-charts": "^0.3.2",
     "vue-loader": "^15.9.0",
     "vue-template-compiler": "^2.6.11"
   },

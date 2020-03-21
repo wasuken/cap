@@ -1,22 +1,23 @@
 <template>
-	<h2>connection nodes(ip address/packet persenage)</h2>
-	<ul>
-		<li v-for="ip in ips" :key="ip">
-			{{ip}} => {{ (packets.filter(x => x.dip == ip).length / packets.length) * 100 }}%
-		</li>
-	</ul>
-	<d3-network :net-nodes="nodes" :net-links="links" :options="options"></d3-network>
+	<pie :chartData="pieChartData"></pie>
+	<cl :chartData="clChartData"></cl>
+	<nw :iface="iface" :nodes="nodes" :links="links"></nw>
 </template>
 <script>
- import D3Network from 'vue-d3-network'
+ import pie from "./PacketPie.vue";
+ import nw from "./network_graph.vue";
+ import cl from "./PacketColumn.vue";
+ import util from "./util.js"
  export default{
 	 name: "d3Network",
+	 mixins: [util],
 	 components: {
-		 'd3-network': D3Network
+		 pie,
+		 nw,
+		 cl
 	 },
 	 props: {
-		 nodes: Array,
-		 links: Array,
+		 iface: String,
 	 },
 	 data: function(){
 		 return{
@@ -29,20 +30,58 @@
 	 linkLabels: true,
 	 linkWidth:5
  },
+			 pieChartData: [],
+			 clChartData: [],
+			 packets: [],
+			 nodes: [],
+			 links: [],
 		 }
 	 },
-	 methdods: {
+	 methods: {
 		 asyncPackets: function(){
 			 let token = document.getElementById("token").value;
-			 fetch("/api/v1/net_packets?token=" + token)
+			 fetch("/api/v1/net_packets?type=" + token + "&iface=" + this.iface)
 				 .then(resp => resp.json())
 				 .then(json => {
-
-				 });
+					 this.packets = json;
+				 })
+				 .then(x => this.procData());
 		 },
+		 procData:function(){
+			 /* common */
+			 let ips = this.uniq(this.packets.map(x => x.dip));
+			 /* initialize */
+			 this.pieChartData = [];
+			 this.colChartData = [];
+			 this.nodes = [];
+			 this.links = [];
+			 /* pie chart processing */
+			 let pcData = this.packets.map(x =>
+				 [x.dport, this.packets.filter(y => y.dport == x.dport).length]);
+			 this.pieChartData = [
+				 ["Port Number", "Count"],
+				 ...pcData
+			 ];
+			 /* column chart processing */
+			 let clData = ips.map(ip =>
+				 [ip, this.packets.filter(p => p.dip == ip).length]);
+			 this.colChartData = [
+				 ["IP", "Count"],
+				 ...clData
+			 ];
+			 /* network-d3 processing */
+			 this.nodes.push({id: 0, name: this.iface})
+			 ips.forEach((x, i) => {
+				 this.nodes.push({id: i+1, name: x})
+				 this.links.push({sid: 0,
+								  tid: i+1,
+								  name: "" + ((this.packets.filter(y => y.dip == x.dip).length / this.packets.length) * 100) + "%"});
+			 })
+		 }
 	 }
 	 mounted: function(){
-		 console.log(this.nodes);
+		 this.asyncPackets();
+		 window.setInterval(this.asyncPackets, 20000);
 	 }
  }
 </script>
