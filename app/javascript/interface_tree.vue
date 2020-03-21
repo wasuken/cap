@@ -1,4 +1,10 @@
 <template>
+	<h2>connection nodes(ip address/packet persenage)</h2>
+	<ul>
+		<li v-for="ip in ips" :key="ip">
+			{{ip}} => {{ (packets.filter(x => x.dip == ip).length / packets.length) * 100 }}%
+		</li>
+	</ul>
 	<d3-network :net-nodes="nodes" :net-links="links" :options="options"></d3-network>
 </template>
 <script>
@@ -15,16 +21,27 @@
 	 data: function(){
 		 return{
 			 options:
-		 {
-			 force: 3000,
-			 nodeSize: 15,
-			 nodeLabels: true,
-			 linkWidth:5
-		 }
+ {
+	 force: 3000,
+	 size:{ w:600, h:600},
+	 nodeSize: 10,
+	 nodeLabels: true,
+	 linkLabels: true,
+	 linkWidth:5
+ },
 		 }
 	 },
+	 methdods: {
+		 asyncPackets: function(){
+			 let token = document.getElementById("token").value;
+			 fetch("/api/v1/net_packets?token=" + token)
+				 .then(resp => resp.json())
+				 .then(json => {
+
+				 });
+		 },
+	 }
 	 mounted: function(){
-		 console.log("hoge");
 		 console.log(this.nodes);
 	 }
  }
