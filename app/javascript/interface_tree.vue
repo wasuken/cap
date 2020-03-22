@@ -62,14 +62,14 @@
 				 ["" + x, this.packets.filter(y => y.dport == x).length]);
 			 this.pieChartData = [
 				 ["Port Number", "Count"],
-				 ...pcData
+				 ...pcData.sort((a, b) => b[1] - a[1])
 			 ];
 			 /* column chart processing */
 			 let clData = ips.map(ip =>
 				 ["" + ip, this.packets.filter(p => p.dip == ip).length]);
 			 this.clChartData = [
 				 ["IP", "Count"],
-				 ...clData.sort((a, b) => b[1] - a[1]).slice(9)
+				 ...clData.sort((a, b) => b[1] - a[1]).slice(0, 10)
 			 ];
 			 /* network-d3 processing */
 			 this.nodes.push({id: 0, name: this.iface})

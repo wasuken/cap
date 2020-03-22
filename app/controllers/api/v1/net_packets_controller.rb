@@ -16,6 +16,7 @@ class Api::V1::NetPacketsController < ApplicationController
                            "net_packets.packet_type",
                            "net_packets.iface_name", "net_packets.id as npid")
                    .where.not(dsts: {dip: ifaces_ips})
+      p ifaces_ips
       if params[:type]
         @packets = @packets.where(packet_type: params[:type])
       end
