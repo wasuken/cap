@@ -1,7 +1,9 @@
 <template>
-	<pie :chartData="pieChartData"></pie>
-	<cl :chartData="clChartData"></cl>
-	<nw :iface="iface" :nodes="nodes" :links="links"></nw>
+	<div>
+		<pie :chartData="pieChartData"></pie>
+		<cl :chartData="clChartData"></cl>
+		<nw :iface="iface" :nodes="nodes" :links="links"></nw>
+	</div>
 </template>
 <script>
  import pie from "./PacketPie.vue";
@@ -16,9 +18,8 @@
 		 nw,
 		 cl
 	 },
-	 props: {
-		 iface: String,
-	 },
+
+	 props: ['iface'],
 	 data: function(){
 		 return{
 			 options:
@@ -40,7 +41,7 @@
 	 methods: {
 		 asyncPackets: function(){
 			 let token = document.getElementById("token").value;
-			 fetch("/api/v1/net_packets?type=" + token + "&iface=" + this.iface)
+			 fetch("/api/v1/net_packets?token=" + token + "&iface=" + this.iface)
 				 .then(resp => resp.json())
 				 .then(json => {
 					 this.packets = json;
@@ -52,22 +53,23 @@
 			 let ips = this.uniq(this.packets.map(x => x.dip));
 			 /* initialize */
 			 this.pieChartData = [];
-			 this.colChartData = [];
+			 this.clChartData = [];
 			 this.nodes = [];
 			 this.links = [];
 			 /* pie chart processing */
-			 let pcData = this.packets.map(x =>
-				 [x.dport, this.packets.filter(y => y.dport == x.dport).length]);
+			 let uniqPorts = this.uniq(this.packets.map(x => x.dport).filter(x => x <= 1024));
+			 let pcData = uniqPorts.map(x =>
+				 ["" + x, this.packets.filter(y => y.dport == x).length]);
 			 this.pieChartData = [
 				 ["Port Number", "Count"],
 				 ...pcData
 			 ];
 			 /* column chart processing */
 			 let clData = ips.map(ip =>
-				 [ip, this.packets.filter(p => p.dip == ip).length]);
-			 this.colChartData = [
+				 ["" + ip, this.packets.filter(p => p.dip == ip).length]);
+			 this.clChartData = [
 				 ["IP", "Count"],
-				 ...clData
+				 ...clData.sort((a, b) => b[1] - a[1]).slice(9)
 			 ];
 			 /* network-d3 processing */
 			 this.nodes.push({id: 0, name: this.iface})
@@ -78,7 +80,7 @@
 								  name: "" + ((this.packets.filter(y => y.dip == x.dip).length / this.packets.length) * 100) + "%"});
 			 })
 		 }
-	 }
+	 },
 	 mounted: function(){
 		 this.asyncPackets();
 		 window.setInterval(this.asyncPackets, 20000);

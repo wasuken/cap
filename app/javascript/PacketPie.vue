@@ -1,6 +1,5 @@
 <template>
 	<GChart
-		:settings="chartSettings"
 		:type="chartType"
 		:data="chartData"
 		:options="chartOptions"
@@ -19,14 +18,11 @@
 		 },
 		 chartData: {
 			 type: Array,
-			 default: () => {
-				 return []
-			 }
 		 },
 		 chartOptions: {
 			 type: Object,
 			 default: () => {
-				 return {title: 'Packet Pie'}
+				 return {title: 'Well-Known Port Pie'}
 			 }
 		 }
 	 }

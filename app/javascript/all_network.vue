@@ -3,7 +3,7 @@
 		<h2>interfaces</h2>
 		<ul>
 			<li v-for="i in interfaces" :key="i">
-				{{i}}
+				<router-link :to="'/iface/' + i">{{i}}</router-link>
 			</li>
 		</ul>
 		<h2>connection nodes(ip address => packet persenage)</h2>

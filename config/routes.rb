@@ -17,4 +17,5 @@ Rails.application.routes.draw do
       resources :net_packets, only: [:index]
     end
   end
+  get '*path', to: 'homes#redirect_to_root'
 end

@@ -12,7 +12,7 @@
 	 },
 	 props: {
 		 chartData: Array,
-	 }
+	 },
 	 data() {
 		 return {
 			 chartOptions: {
