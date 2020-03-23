@@ -1,9 +1,9 @@
 <template>
 	<div id="app">
-		<h2>interfaces</h2>
+		<h2>host/interfaces</h2>
 		<ul>
-			<li v-for="i in interfaces" :key="i">
-				<router-link :to="'/iface/' + i">{{i}}</router-link>
+			<li v-for="h_i in h_is" :key="h_i">
+				<router-link :to="'/iface/' + h_i">{{h_i}}</router-link>
 			</li>
 		</ul>
 		<h2>connection nodes(ip address => packet persenage)</h2>
@@ -25,6 +25,7 @@
 	 mixins: [util],
 	 data: function(){
 		 return{
+			 h_is: [],
 			 interfaces: [],
 			 ips: [],
 			 packets: [],
@@ -39,6 +40,7 @@
 				 .then(resp => resp.json())
 				 .then(json => {
 					 this.packets = json;
+					 this.h_is = this.uniq(this.packets.map(x => x.h_i));
 					 this.interfaces = this.uniq(json.map(x => x.iface_name));
 					 this.interfaces.sort();
 					 this.ips = this.uniq(json.map(x => x.dip));
@@ -55,10 +57,12 @@
 						 return {iface: this.packets.find(y => y.dip == x).iface_name, dip: x};
 					 });
 					 iface_ips.forEach((x, i) => {
-						 this.nodes.push({id: i+ifaces.length, name: x.dip})
+						 this.nodes.push({id: i+ifaces.length, name: x.dip});
+						 let per = ((parseFloat(this.packets.filter(y => y.dip == x.dip).length) /
+							 this.packets.length) * 100) + "%";
 						 this.links.push({sid: iface_map[x.iface],
 										  tid: i+ifaces.length,
-										  name: "" + ((this.packets.filter(y => y.dip == x.dip).length / this.packets.length) * 100) + "%"});
+										  name: per});
 					 });
 				 });
 		 },

@@ -1,5 +1,7 @@
 # coding: utf-8
-require "packetfu"
+require 'packetfu'
+require 'securerandom'
+require 'socket'
 
 class PacketCaptureJob < ApplicationJob
   include PacketFu
@@ -31,9 +33,13 @@ class PacketCaptureJob < ApplicationJob
             src_port = tcp_packet.tcp_src.to_s
             dst_port = tcp_packet.tcp_dst.to_s
 
+            host = Host.where(name: Socket.gethostname).first ||
+                   Host.create(name: Socket.gethostname, htoken: SecureRandom.hex(35))
             src = Src.find_or_create_by(sip: src_ip, sport: src_port, smac: src_mac)
             dst = Dst.find_or_create_by(dip: dst_ip, dport: dst_port, dmac: dst_mac)
-            NetPacket.create!(src_id: src.id, dst_id: dst.id, iface_name: iface, content: pkt.force_encoding("UTF-8"), packet_type: "tcp")
+            NetPacket.create!(src_id: src.id, dst_id: dst.id, host_id: host.id,
+                              iface_name: iface, content: pkt.force_encoding("UTF-8"),
+                              packet_type: "tcp")
           elsif UDPPacket.can_parse?(pkt)
             udp_packet = UDPPacket.parse(pkt)
             src_mac = EthHeader.str2mac(udp_packet.eth_src).to_s
@@ -43,13 +49,16 @@ class PacketCaptureJob < ApplicationJob
             src_port = udp_packet.udp_src.to_s
             dst_port = udp_packet.udp_dst.to_s
 
+            host = Host.where(name: Socket.gethostname).first ||
+                   Host.create(name: Socket.gethostname, htoken: SecureRandom.hex(35))
             src = Src.find_or_create_by(sip: src_ip, sport: src_port, smac: src_mac)
             dst = Dst.find_or_create_by(dip: dst_ip, dport: dst_port, dmac: dst_mac)
-            NetPacket.create!(src_id: src.id, dst_id: dst.id, iface_name: iface, content: pkt.force_encoding("UTF-8"), packet_type: "udp")
+            NetPacket.create!(src_id: src.id, dst_id: dst.id, host_id: host.id,
+                              iface_name: iface, content: pkt.force_encoding("UTF-8"),
+                              packet_type: "udp")
           end
           cnt += 1
         rescue => er
-          p "hoge"
           Rails.logger.info er
           raise ActiveRecord::Rollback
         ensure

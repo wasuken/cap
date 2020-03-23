@@ -5,7 +5,7 @@ import iface from "./interface_tree.vue";
 
 const routes = [
 	{ path: '/', component: base },
-	{ path: '/iface/:iface', component: iface, props: true},
+	{ path: '/iface/:host/:iface', component: iface, props: true},
 ];
 
 export default new VueRouter({ routes });

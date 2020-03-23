@@ -19,7 +19,10 @@
 		 cl
 	 },
 
-	 props: ['iface'],
+	 props: {
+		 host: String,
+		 iface: String,
+	 },
 	 data: function(){
 		 return{
 			 options:
@@ -41,7 +44,9 @@
 	 methods: {
 		 asyncPackets: function(){
 			 let token = document.getElementById("token").value;
-			 fetch("/api/v1/net_packets?token=" + token + "&iface=" + this.iface)
+			 fetch("/api/v1/net_packets?token=" + token +
+				   "&iface=" + this.iface +
+				   "&host=" + this.host)
 				 .then(resp => resp.json())
 				 .then(json => {
 					 this.packets = json;
@@ -75,9 +80,11 @@
 			 this.nodes.push({id: 0, name: this.iface})
 			 ips.forEach((x, i) => {
 				 this.nodes.push({id: i+1, name: x})
+				 let per = ((this.packets.filter(y => y.dip == x).length /
+					 this.packets.length) * 100) + "%";
 				 this.links.push({sid: 0,
 								  tid: i+1,
-								  name: "" + ((this.packets.filter(y => y.dip == x.dip).length / this.packets.length) * 100) + "%"});
+								  name: per});
 			 })
 		 }
 	 },

@@ -10,30 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_18_215406) do
+ActiveRecord::Schema.define(version: 2020_03_22_213455) do
 
   create_table "dsts", force: :cascade do |t|
-    t.integer "dport"
-    t.string "dip"
-    t.string "dmac"
+    t.integer "dport", null: false
+    t.string "dip", null: false
+    t.string "dmac", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "hosts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "htoken", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["htoken"], name: "index_hosts_on_htoken", unique: true
+  end
+
   create_table "net_packets", force: :cascade do |t|
-    t.integer "dst_id"
-    t.integer "src_id"
+    t.integer "dst_id", null: false
+    t.integer "src_id", null: false
+    t.integer "host_id", null: false
     t.string "packet_type", default: "tcp"
-    t.string "iface_name"
-    t.string "content"
+    t.string "iface_name", null: false
+    t.string "content", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "srcs", force: :cascade do |t|
-    t.integer "sport"
-    t.string "sip"
-    t.string "smac"
+    t.integer "sport", null: false
+    t.string "sip", null: false
+    t.string "smac", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -41,7 +50,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_215406) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
-    t.string "token", default: "77716993c7f2ce46d2126169cad0ce5b84c46779583df1d11a77aa0a191aae207f66d7", null: false
+    t.string "token", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
