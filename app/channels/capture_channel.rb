@@ -7,13 +7,15 @@ class CaptureChannel < ApplicationCable::Channel
   end
   def receive(data)
     # no certification for the time being.
-    src = Src.find_or_create_by(data["src"])
-    dst = Dst.find_or_create_by(data["dst"])
-    host = Host.where(name: data["host"]).first ||
-           Host.create(name: data["host"], htoken: SecureRandom.hex(35))
-    NetPacket.create!(src_id: src.id, dst_id: dst.id, host_id: host.id,
-                      content: data["content"], iface_name: data["iface_name"],
-                      packet_type: data["type"])
+    data.each do |pkt|
+      src = Src.find_or_create_by(pkt["src"])
+      dst = Dst.find_or_create_by(pkt["dst"])
+      host = Host.where(name: pkt["host"]).first ||
+             Host.create(name: pkt["host"], htoken: SecureRandom.hex(35))
+      NetPacket.create!(src_id: src.id, dst_id: dst.id, host_id: host.id,
+                        content: pkt["content"], iface_name: pkt["iface_name"],
+                        packet_type: pkt["type"])
+    end
   end
 
   def unsubscribed
