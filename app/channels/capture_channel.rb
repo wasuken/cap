@@ -1,5 +1,6 @@
 require 'securerandom'
 require 'socket'
+require 'json'
 class CaptureChannel < ApplicationCable::Channel
   def subscribed
     # stream_from "some_channel"
@@ -7,7 +8,7 @@ class CaptureChannel < ApplicationCable::Channel
   end
   def receive(data)
     # no certification for the time being.
-    data.each do |pkt|
+    JSON.parse(data["data"]).each do |pkt|
       src = Src.find_or_create_by(pkt["src"])
       dst = Dst.find_or_create_by(pkt["dst"])
       host = Host.where(name: pkt["host"]).first ||
