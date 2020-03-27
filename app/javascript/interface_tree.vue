@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<pie :chartData="pieChartData"></pie>
-		<cl :chartData="clChartData"></cl>
+		<cl :chartData="clChartData" :iface="iface" :host="host" ></cl>
 		<nw :iface="iface" :nodes="nodes" :links="links"></nw>
 	</div>
 </template>

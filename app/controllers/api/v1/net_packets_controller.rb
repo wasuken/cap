@@ -30,10 +30,10 @@ class Api::V1::NetPacketsController < ApplicationController
         @packets = @packets.where(hosts: {name: params[:host]})
       end
       if params[:dip]
-        @packets = @packets.where(srcs: {dip: params[:dip]})
+        @packets = @packets.where(dsts: {dip: params[:dip]})
       end
       if params[:sip]
-        @packets = @packets.where(dsts: {sip: params[:sip]})
+        @packets = @packets.where(srcs: {sip: params[:sip]})
       end
       render json: @packets.order(npid: "desc").take(1000)
     end
