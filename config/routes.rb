@@ -17,6 +17,6 @@ Rails.application.routes.draw do
       resources :net_packets, only: [:index, :store]
     end
   end
-  mount ActionCable.server => '/cable/packets'
+  mount ActionCable.server => '/cable/netpackets'
   get '*path', to: 'homes#redirect_to_root'
 end
