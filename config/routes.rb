@@ -19,4 +19,5 @@ Rails.application.routes.draw do
   end
   mount ActionCable.server => '/cable/netpackets'
   get '*path', to: 'homes#redirect_to_root'
+  # mount LetsEncrypt::Engine => '/.well-known'
 end
