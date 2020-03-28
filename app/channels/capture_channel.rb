@@ -9,13 +9,7 @@ class CaptureChannel < ApplicationCable::Channel
   def receive(data)
     # no certification for the time being.
     JSON.parse(data["data"]).each do |pkt|
-      src = Src.find_or_create_by(pkt["src"])
-      dst = Dst.find_or_create_by(pkt["dst"])
-      host = Host.where(name: pkt["host"]).first ||
-             Host.create(name: pkt["host"], h2token: SecureRandom.hex(35))
-      NetPacket.create!(src_id: src.id, dst_id: dst.id, host_id: host.id,
-                        content: pkt["content"], iface_name: pkt["iface_name"],
-                        packet_type: pkt["type"])
+      PacketPostJob.perform_later(pkt)
     end
   end
 
